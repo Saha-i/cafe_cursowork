@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Список блюд')}"></head>
+<body>
+<header th:replace="~{fragments :: header}"></header>
+
+<section class="band">
+    <div class="band-inner">
+        <div class="page-head">
+            <div>
+                <h1 class="page-title">Список блюд</h1>
+                <p class="page-subtitle"
+                   th:text="(${selected} ? 'Блюд в категории «' + ${selected.title} + '»: ' : 'Блюд в меню: ') + ${#lists.size(dishes)}">
+                    Блюд в меню: 0</p>
+            </div>
+            <a class="btn btn-accent" th:href="@{/dishes/new}">+ Добавить</a>
+        </div>
+
+        <nav class="filter" aria-label="Фильтр по категории">
+            <a th:href="@{/dishes}" class="chip" th:classappend="${selected == null} ? 'chip-active'">Все</a>
+            <a th:each="c : ${categories}"
+               th:href="@{/dishes(category=${c})}"
+               th:text="${c.title}"
+               class="chip"
+               th:classappend="${selected == c} ? 'chip-active'">Категория</a>
+        </nav>
+    </div>
+</section>
+
+<main class="page">
+    <div class="alert alert-success" th:if="${message}" th:text="${message}"></div>
+
+    <div class="card table-card" th:if="${!#lists.isEmpty(dishes)}">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Название</th>
+                <th>Категория</th>
+                <th class="num">Цена</th>
+                <th class="num">Вес</th>
+                <th class="actions-col"></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="d : ${dishes}">
+                <td class="dish-name" th:text="${d.name}">Название</td>
+                <td><span class="badge" th:classappend="'badge-' + ${#strings.toLowerCase(d.category.name())}"
+                          th:text="${d.category.title}">Категория</span></td>
+                <td class="num price"
+                    th:text="${#numbers.formatDecimal(d.price, 1, 'WHITESPACE', 2, 'COMMA')} + ' ₽'">0 ₽</td>
+                <td class="num" th:text="${d.weight} + ' ' + ${d.category.unit}">0 г</td>
+                <td class="actions">
+                    <a class="btn btn-ghost btn-sm" th:href="@{/dishes/{id}/edit(id=${d.id})}">Изменить</a>
+                    <button type="button" class="btn btn-danger-ghost btn-sm js-delete"
+                            th:data-action="@{/dishes/{id}/delete(id=${d.id})}"
+                            th:data-name="${d.name}">Удалить</button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="card empty" th:if="${#lists.isEmpty(dishes)}">
+        <p class="empty-title">Здесь пока пусто</p>
+        <p class="empty-text" th:text="${selected} ? 'В этой категории ещё нет блюд.' : 'Добавьте первое блюдо в меню.'">
+            Добавьте первое блюдо в меню.</p>
+        <a class="btn btn-primary" th:href="@{/dishes/new}">+ Добавить блюдо</a>
+    </div>
+</main>
+
+<dialog id="deleteDialog" class="dialog">
+    <form method="post" id="deleteForm">
+        <h2 class="dialog-title">Удалить блюдо?</h2>
+        <p class="dialog-text">Блюдо «<span id="deleteName"></span>» будет удалено из меню без возможности восстановления.</p>
+        <div class="dialog-actions">
+            <button type="button" class="btn btn-ghost" id="deleteCancel">Отмена</button>
+            <button type="submit" class="btn btn-danger">Удалить</button>
+        </div>
+    </form>
+</dialog>
+
+<script>
+    const dialog = document.getElementById('deleteDialog');
+    document.querySelectorAll('.js-delete').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.getElementById('deleteForm').action = btn.dataset.action;
+            document.getElementById('deleteName').textContent = btn.dataset.name;
+            dialog.showModal();
+        });
+    });
+    document.getElementById('deleteCancel').addEventListener('click', () => dialog.close());
+</script>
+</body>
+</html>

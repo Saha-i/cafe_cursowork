@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${title} + ' · Меню кафе'">Меню кафе</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<svg th:fragment="logo" class="logo" viewBox="0 0 32 32" aria-hidden="true">
+    <circle cx="16" cy="8" r="2" fill="currentColor"/>
+    <path d="M4 22a12 12 0 0 1 24 0z" fill="currentColor"/>
+    <rect x="2" y="24" width="28" height="2.6" rx="1.3" fill="currentColor"/>
+</svg>
+
+<header th:fragment="header" class="topbar">
+    <a class="brand" th:href="@{/dishes}">
+        <svg th:replace="~{fragments :: logo}"></svg>
+        <span class="brand-name">Меню кафе</span>
+    </a>
+    <div class="topbar-user">
+        <span class="user-login" th:text="${session.userLogin}">login</span>
+        <form th:action="@{/logout}" method="post">
+            <button type="submit" class="btn btn-on-dark btn-sm">Выйти</button>
+        </form>
+    </div>
+</header>
+
+<aside th:fragment="authBrand" class="auth-aside">
+    <div class="brand">
+        <svg th:replace="~{fragments :: logo}"></svg>
+        <span class="brand-name">Меню кафе</span>
+    </div>
+    <div class="auth-aside-body">
+        <p class="auth-headline">Блюда, цены и порции в&nbsp;одном месте</p>
+    </div>
+</aside>
+
+</body>
+</html>

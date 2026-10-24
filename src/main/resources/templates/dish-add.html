@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Новое блюдо')}"></head>
+<body>
+<header th:replace="~{fragments :: header}"></header>
+
+<section class="band band-short">
+    <div class="band-inner band-narrow">
+        <a class="back-link" th:href="@{/dishes}">← К списку блюд</a>
+        <h1 class="page-title">Новое блюдо</h1>
+        <p class="page-subtitle">Заполните данные и нажмите «Сохранить»</p>
+    </div>
+</section>
+
+<main class="page page-narrow">
+    <form class="card form form-card" th:action="@{/dishes}" th:object="${form}" method="post" novalidate>
+        <label class="field">
+            <span class="field-label">Название</span>
+            <input type="text" th:field="*{name}" placeholder="Например, Борщ с говядиной" autofocus
+                   th:classappend="${#fields.hasErrors('name')} ? 'is-invalid'">
+            <span class="field-error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
+        </label>
+
+        <label class="field">
+            <span class="field-label">Категория</span>
+            <select th:field="*{category}" th:classappend="${#fields.hasErrors('category')} ? 'is-invalid'">
+                <option value="">выберите категорию</option>
+                <option th:each="c : ${categories}" th:value="${c}" th:text="${c.title}">Категория</option>
+            </select>
+            <span class="field-error" th:if="${#fields.hasErrors('category')}" th:errors="*{category}"></span>
+        </label>
+
+        <div class="field-row">
+            <label class="field">
+                <span class="field-label">Цена, ₽</span>
+                <input type="number" th:field="*{price}" step="0.01" min="0" placeholder="0,00"
+                       th:classappend="${#fields.hasErrors('price')} ? 'is-invalid'">
+                <span class="field-error" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></span>
+            </label>
+
+            <label class="field">
+                <span class="field-label">Вес порции, г / мл</span>
+                <input type="number" th:field="*{weight}" step="1" min="1" placeholder="0"
+                       th:classappend="${#fields.hasErrors('weight')} ? 'is-invalid'">
+                <span class="field-error" th:if="${#fields.hasErrors('weight')}" th:errors="*{weight}"></span>
+            </label>
+        </div>
+
+        <div class="form-actions">
+            <a class="btn btn-ghost" th:href="@{/dishes}">Отмена</a>
+            <button type="submit" class="btn btn-primary">Сохранить</button>
+        </div>
+    </form>
+</main>
+</body>
+</html>
